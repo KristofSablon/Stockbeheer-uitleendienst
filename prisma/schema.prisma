@@ -1,0 +1,308 @@
+// Datamodel uitleendienst Londerzeel
+// Afgeleid uit de functionele analyse (sectie 8) en het uitleen- en retributiereglement.
+// SQLite ondersteunt geen enums; statuswaarden staan als String met vaste waarden
+// (zie src/lib/domein.ts voor de toegelaten waarden en labels).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// --- Gebruikers & toegang ---------------------------------------------------
+
+model Gebruiker {
+  id           String   @id @default(cuid())
+  naam         String
+  email        String   @unique
+  wachtwoordHash String
+  // Komma-gescheiden rollen, bv. "ADMIN,BEHEERDER"
+  rollen       String
+  actief       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  werkopdrachten Werkopdracht[]
+  auditlogs      AuditLog[]
+}
+
+// --- Aanvrager & contact ----------------------------------------------------
+
+model Aanvrager {
+  id               String   @id @default(cuid())
+  naam             String
+  // VERENIGING | ONDERWIJS | ORGANISATOR
+  type             String
+  erkenningsstatus String   @default("ERKEND")
+  adres            String?
+  telefoon         String?
+  email            String?
+  createdAt        DateTime @default(now())
+
+  contactpersonen Contactpersoon[]
+  dossiers        Dossier[]
+}
+
+model Contactpersoon {
+  id          String   @id @default(cuid())
+  aanvragerId String
+  aanvrager   Aanvrager @relation(fields: [aanvragerId], references: [id], onDelete: Cascade)
+  naam        String
+  telefoon    String?
+  email       String?
+  functie     String?
+
+  dossiers    Dossier[]
+}
+
+// --- Dossier / aanvraag -----------------------------------------------------
+
+model Dossier {
+  id               String   @id @default(cuid())
+  referentienummer String   @unique
+  // Zie STATUSSEN in src/lib/domein.ts
+  status           String   @default("INGEDIEND")
+  aanvraagdatum    DateTime @default(now())
+  // LEVERING | AFHALING
+  leveringswijze   String
+  uitleenVan       DateTime
+  uitleenTot       DateTime
+  weigeringReden   String?
+  opmerkingen      String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  aanvragerId      String
+  aanvrager        Aanvrager      @relation(fields: [aanvragerId], references: [id])
+  contactpersoonId String?
+  contactpersoon   Contactpersoon? @relation(fields: [contactpersoonId], references: [id])
+  evenement        Evenement?
+  regels           Aanvraagregel[]
+  reservaties      Reservatie[]
+  werkopdrachten   Werkopdracht[]
+  ontvangstbewijs  Ontvangstbewijs?
+  retourformulier  Retourformulier?
+  schadegevallen   Schadegeval[]
+  factuur          Factuur?
+  notificaties     Notificatie[]
+  statusHistoriek  StatusHistoriek[]
+}
+
+model Evenement {
+  id            String   @id @default(cuid())
+  dossierId     String   @unique
+  dossier       Dossier  @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  naam          String
+  locatie       String?
+  datum         DateTime?
+  aardActiviteit String?
+}
+
+// --- Catalogus & voorraad ---------------------------------------------------
+
+model Materiaal {
+  id                String   @id @default(cuid())
+  naam              String
+  // Zie CATEGORIEEN in src/lib/domein.ts
+  categorie         String
+  totaalAantal      Int      @default(0)
+  staat             String   @default("GOED")
+  transportVereist  Boolean  @default(false)
+  huurtarief        Float    @default(0)
+  transporttarief   Float    @default(0)
+  capaciteitslimiet Int?
+  eenheid           String?
+  omschrijving      String?
+  actief            Boolean  @default(true)
+  createdAt         DateTime @default(now())
+
+  regels       Aanvraagregel[]
+  reservaties  Reservatie[]
+  schadegevallen Schadegeval[]
+  onderhoud    Onderhoud[]
+}
+
+model Aanvraagregel {
+  id             String   @id @default(cuid())
+  dossierId      String
+  dossier        Dossier   @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  materiaalId    String
+  materiaal      Materiaal @relation(fields: [materiaalId], references: [id])
+  gevraagdAantal Int
+  toegekendAantal Int      @default(0)
+  deelbedrag     Float     @default(0)
+
+  @@unique([dossierId, materiaalId])
+}
+
+model Reservatie {
+  id          String   @id @default(cuid())
+  materiaalId String
+  materiaal   Materiaal @relation(fields: [materiaalId], references: [id])
+  dossierId   String
+  dossier     Dossier   @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  van         DateTime
+  tot         DateTime
+  aantal      Int
+  status      String   @default("GERESERVEERD")
+}
+
+// --- Uitvoering -------------------------------------------------------------
+
+model Werkopdracht {
+  id           String   @id @default(cuid())
+  dossierId    String
+  dossier      Dossier  @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  // LEVERING | AFHALING | RETOUR
+  type         String
+  datum        DateTime?
+  tijdsvenster String?
+  medewerkerId String?
+  medewerker   Gebruiker? @relation(fields: [medewerkerId], references: [id])
+  topdeskRef   String?
+  status       String   @default("GEPLAND")
+  opmerkingen  String?
+  createdAt    DateTime @default(now())
+}
+
+model Ontvangstbewijs {
+  id                    String   @id @default(cuid())
+  dossierId             String   @unique
+  dossier               Dossier  @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  datumTijd             DateTime @default(now())
+  geplandeRetour        DateTime?
+  handtekeningAanvrager String?
+  handtekeningMedewerker String?
+  opmerkingen           String?
+  regels                OntvangstbewijsRegel[]
+}
+
+model OntvangstbewijsRegel {
+  id                String   @id @default(cuid())
+  ontvangstbewijsId String
+  ontvangstbewijs   Ontvangstbewijs @relation(fields: [ontvangstbewijsId], references: [id], onDelete: Cascade)
+  materiaalNaam     String
+  aantal            Int
+  staatBijLevering  String   @default("GOED")
+}
+
+model Retourformulier {
+  id                    String   @id @default(cuid())
+  dossierId             String   @unique
+  dossier               Dossier  @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  retourdatum           DateTime @default(now())
+  // GEEN_SCHADE | SCHADE
+  algemeneStatus        String   @default("GEEN_SCHADE")
+  handtekeningAanvrager String?
+  handtekeningMedewerker String?
+  opmerkingen           String?
+  regels                RetourRegel[]
+}
+
+model RetourRegel {
+  id                String   @id @default(cuid())
+  retourformulierId String
+  retourformulier   Retourformulier @relation(fields: [retourformulierId], references: [id], onDelete: Cascade)
+  materiaalNaam     String
+  aantal            Int
+  // GOED | SCHADE
+  beoordeling       String   @default("GOED")
+  opmerking         String?
+}
+
+model Schadegeval {
+  id            String   @id @default(cuid())
+  dossierId     String
+  dossier       Dossier  @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  materiaalId   String?
+  materiaal     Materiaal? @relation(fields: [materiaalId], references: [id])
+  omschrijving  String
+  // EIGEN_HERSTEL | EXTERN_HERSTEL | VERVANGING
+  actie         String
+  geraamdeKost  Float    @default(0)
+  effectieveKost Float?
+  createdAt     DateTime @default(now())
+}
+
+// --- Financieel -------------------------------------------------------------
+
+model Factuur {
+  id              String   @id @default(cuid())
+  dossierId       String   @unique
+  dossier         Dossier  @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  bedragHuur      Float    @default(0)
+  bedragTransport Float    @default(0)
+  bedragSchade    Float    @default(0)
+  boete           Float    @default(0)
+  totaal          Float    @default(0)
+  vervaldag       DateTime?
+  // OPEN | BETAALD | VERVALLEN | GEANNULEERD
+  betaalstatus    String   @default("OPEN")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// --- Onderhoud & keuring ----------------------------------------------------
+
+model Onderhoud {
+  id          String   @id @default(cuid())
+  materiaalId String
+  materiaal   Materiaal @relation(fields: [materiaalId], references: [id], onDelete: Cascade)
+  // ONDERHOUD | REINIGING | KEURING
+  type        String
+  datum       DateTime?
+  vervaldatum DateTime?
+  status      String   @default("GEPLAND")
+  opmerkingen String?
+}
+
+// --- Communicatie & logboek -------------------------------------------------
+
+model Notificatie {
+  id        String   @id @default(cuid())
+  dossierId String?
+  dossier   Dossier? @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  type      String
+  tijdstip  DateTime @default(now())
+  ontvanger String?
+  kanaal    String   @default("EMAIL")
+  onderwerp String?
+  inhoud    String?
+}
+
+model StatusHistoriek {
+  id          String   @id @default(cuid())
+  dossierId   String
+  dossier     Dossier  @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  vanStatus   String?
+  naarStatus  String
+  tijdstip    DateTime @default(now())
+  doorGebruiker String?
+  opmerking   String?
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  gebruikerId String?
+  gebruiker   Gebruiker? @relation(fields: [gebruikerId], references: [id])
+  actie       String
+  entiteit    String?
+  entiteitId  String?
+  tijdstip    DateTime @default(now())
+  details     String?
+}
+
+// --- Configuratie -----------------------------------------------------------
+
+model Configuratie {
+  id           String   @id @default(cuid())
+  sleutel      String   @unique
+  waarde       String
+  // GETAL | TEKST | TERMIJN | TARIEF
+  type         String   @default("TEKST")
+  categorie    String   @default("ALGEMEEN")
+  omschrijving String?
+  updatedAt    DateTime @updatedAt
+}
