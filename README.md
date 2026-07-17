@@ -24,6 +24,9 @@ npm run dev               # start op http://localhost:3000
 > `npm run setup` maakt de databank aan en vult ze met de materiaalcatalogus, de configuratie
 > (tarieven/termijnen), de gebruikers per rol en één voorbeelddossier.
 
+> **Niet-technische gebruiker?** Zie **[HANDLEIDING.md](./HANDLEIDING.md)** voor een stap-voor-stap
+> uitleg (Windows en Mac) om de demoversie lokaal te draaien.
+
 ### Handige scripts
 
 | Script | Doel |
