@@ -103,8 +103,9 @@ kunnen door de dienst gevalideerd/aangepast worden:
 - **Integraties** (Top-desk, financieel pakket, evenementenloket, SMTP): voorzien in het datamodel
   (o.a. Top-desk-referentie, factuurgegevens, notificatie-logboek) maar nog niet effectief gekoppeld.
 
-## Productie
+## Online zetten (deelbare link)
 
-Voor productie: zet `DATABASE_URL` naar een PostgreSQL-verbinding, wijzig de `provider` in
-`prisma/schema.prisma` naar `postgresql`, stel een sterke `SESSION_SECRET` in, en draai
-`prisma migrate deploy`.
+Voor een deelbare demo op **Vercel** (met gratis PostgreSQL): zie **[DEPLOY.md](./DEPLOY.md)**.
+De app schakelt in productie automatisch over van SQLite naar PostgreSQL — het datamodel blijft op
+één plek staan (`prisma/schema.prisma`); enkel de databank verschilt. Het script `vercel-build`
+regelt schema, tabellen, basisdata en build.

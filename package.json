@@ -13,7 +13,9 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "prisma db push --force-reset && npm run db:seed",
     "db:studio": "prisma studio",
-    "setup": "prisma generate && prisma db push && npm run db:seed"
+    "setup": "prisma generate && prisma db push && npm run db:seed",
+    "prod:schema": "node scripts/gen-prod-schema.mjs",
+    "vercel-build": "npm run prod:schema && prisma generate --schema=prisma/schema.prod.prisma && prisma db push --schema=prisma/schema.prod.prisma --accept-data-loss && tsx prisma/seed.ts && next build"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

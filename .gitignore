@@ -16,6 +16,9 @@
 /prisma/dev.db
 /prisma/dev.db-journal
 
+# gegenereerd productie-schema (afgeleid van schema.prisma bij de Vercel-build)
+/prisma/schema.prod.prisma
+
 # misc
 .DS_Store
 *.pem
