@@ -1,0 +1,17 @@
+{
+  "name": "Uitleendienst Londerzeel",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  "postCreateCommand": "cp -n .env.example .env && npm install && npm run setup",
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Uitleendienst",
+      "onAutoForward": "openPreview"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["Prisma.prisma"]
+    }
+  }
+}

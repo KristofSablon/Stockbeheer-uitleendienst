@@ -5,6 +5,8 @@ computer** opstart om ze uit te proberen. Reken op ongeveer 10 minuten voor de e
 
 ---
 
+> **Liever niets installeren?** Spring naar **[sectie 6 — Testen in de browser (zonder installatie)](#6-testen-in-de-browser-zonder-installatie)**.
+
 ## 1. Wat je vooraf nodig hebt
 
 Installeer twee gratis programma's (eenmalig):
@@ -118,6 +120,39 @@ Zo doorloop je in enkele minuten het hele proces:
   ```bash
   npm run db:reset
   ```
+
+---
+
+## 6. Testen in de browser (zonder installatie)
+
+Wil je niets installeren op je computer? Gebruik dan **GitHub Codespaces**: dat draait de volledige
+applicatie in een kant-en-klare omgeving in je browser. Je hebt enkel een (gratis) GitHub-account
+nodig. De installatie gebeurt automatisch dankzij de meegeleverde configuratie.
+
+**Stap voor stap:**
+
+1. Ga naar de repository op **https://github.com/KristofSablon/Stockbeheer-uitleendienst**.
+2. Klik bovenaan op de vervolgkeuzelijst met de branch en kies
+   **`claude/github-stockbeheer-connect-q56akn`**.
+3. Klik op de groene knop **`< > Code`** → tabblad **Codespaces** → **Create codespace on
+   claude/github-stockbeheer-connect-q56akn**.
+4. Er opent een omgeving in je browser. **Wacht** tot onderaan de installatie klaar is (je ziet
+   "Seed voltooid" en de melding stopt — dit duurt de eerste keer 1 à 2 minuten).
+5. Typ in het onderste terminalvenster:
+
+   ```bash
+   npm run dev
+   ```
+
+6. Er verschijnt een melding **"Your application running on port 3000 is available"** → klik op
+   **Open in Browser** (of het voorbeeldvenster opent vanzelf). De app opent in een nieuw tabblad.
+
+Aanmelden en uitproberen gaat verder net zoals hierboven beschreven (admin@londerzeel.be /
+`londerzeel`). Sluit je het Codespace-tabblad, dan pauzeert de omgeving; je kunt ze later heropenen
+via **Code → Codespaces**.
+
+> Let op: een gratis GitHub-account krijgt maandelijks een ruim aantal gratis Codespace-uren, meer
+> dan genoeg om te testen. De omgeving stopt vanzelf na een tijd inactiviteit.
 
 ---
 
