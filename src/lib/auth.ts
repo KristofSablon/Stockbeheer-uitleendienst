@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { createHmac, timingSafeEqual } from "crypto";
 import { prisma } from "./prisma";
 import { verifieerWachtwoord } from "./wachtwoord";
@@ -54,12 +54,22 @@ export async function aanmelden(email: string, wachtwoord: string): Promise<Sess
 
   const token = maakToken(gebruiker.id);
   const cookieStore = await cookies();
+
+  // Detecteer of we achter een HTTPS-proxy draaien (bv. GitHub Codespaces, Gitpod).
+  // In die omgevingen wordt de app vaak in een ingebouwde preview (iframe) getoond,
+  // waar een SameSite=Lax-cookie niet meegestuurd wordt. Dan is SameSite=None + Secure
+  // nodig. Lokaal (http) blijft het SameSite=Lax zonder Secure, anders wordt de cookie
+  // op http://localhost helemaal niet bewaard.
+  const h = await headers();
+  const proto = (h.get("x-forwarded-proto") ?? "").split(",")[0].trim();
+  const isHttps = proto === "https";
+
   cookieStore.set(COOKIE_NAAM, token, {
     httpOnly: true,
-    sameSite: "lax",
+    sameSite: isHttps ? "none" : "lax",
+    secure: isHttps,
     path: "/",
     maxAge: MAX_AGE,
-    secure: process.env.NODE_ENV === "production",
   });
 
   return {
