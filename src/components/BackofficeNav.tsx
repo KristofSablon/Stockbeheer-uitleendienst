@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export type NavItem = { href: string; label: string; icon: string };
+export type NavItem = { href: string; label: string; icon: string; badge?: number };
 
 export function BackofficeNav({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
@@ -20,7 +20,12 @@ export function BackofficeNav({ items }: { items: NavItem[] }) {
             }`}
           >
             <span className="w-5 text-center">{item.icon}</span>
-            {item.label}
+            <span className="flex-1">{item.label}</span>
+            {item.badge ? (
+              <span className="inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-red-600 px-1.5 text-xs font-semibold text-white">
+                {item.badge}
+              </span>
+            ) : null}
           </Link>
         );
       })}

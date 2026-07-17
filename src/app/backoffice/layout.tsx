@@ -1,14 +1,18 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSessie } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { Logo } from "@/components/Merk";
 import { BackofficeNav, type NavItem } from "@/components/BackofficeNav";
 import { ROL_LABELS } from "@/lib/domein";
 
+// Statussen die om actie van een medewerker vragen (behandeling of bevestiging).
+const TE_BEHANDELEN_STATUS = ["INGEDIEND", "IN_BEHANDELING", "WACHT_OP_AANVULLING", "GOEDGEKEURD", "BEVESTIGD"];
+
 // Navigatie-items met de rollen die ze mogen zien.
 const NAV: (NavItem & { rollen: string[] })[] = [
   { href: "/backoffice", label: "Dashboard", icon: "▤", rollen: ["ADMIN", "PLOEGBAAS", "TECHNISCH", "MAGAZIJNIER", "BEHEERDER", "BELEID"] },
-  { href: "/backoffice/dossiers", label: "Aanvragen / dossiers", icon: "▦", rollen: ["ADMIN", "PLOEGBAAS", "TECHNISCH", "MAGAZIJNIER", "BEHEERDER"] },
+  { href: "/backoffice/dossiers", label: "Aanvragen behandelen", icon: "▦", rollen: ["ADMIN", "PLOEGBAAS", "TECHNISCH", "MAGAZIJNIER", "BEHEERDER"] },
   { href: "/backoffice/kalender", label: "Beschikbaarheid", icon: "▧", rollen: ["ADMIN", "PLOEGBAAS", "MAGAZIJNIER", "BEHEERDER"] },
   { href: "/backoffice/planning", label: "Planning & werkopdrachten", icon: "▥", rollen: ["ADMIN", "PLOEGBAAS", "TECHNISCH", "BEHEERDER"] },
   { href: "/backoffice/retour", label: "Retour & controle", icon: "⇄", rollen: ["ADMIN", "MAGAZIJNIER", "TECHNISCH", "BEHEERDER"] },
@@ -20,7 +24,11 @@ export default async function BackofficeLayout({ children }: { children: React.R
   const sessie = await getSessie();
   if (!sessie) redirect("/login");
 
-  const zichtbaar = NAV.filter((n) => n.rollen.some((r) => sessie.rollen.includes(r)));
+  const teBehandelen = await prisma.dossier.count({ where: { status: { in: TE_BEHANDELEN_STATUS } } });
+
+  const zichtbaar = NAV.filter((n) => n.rollen.some((r) => sessie.rollen.includes(r))).map((n) =>
+    n.href === "/backoffice/dossiers" ? { ...n, badge: teBehandelen } : n
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">

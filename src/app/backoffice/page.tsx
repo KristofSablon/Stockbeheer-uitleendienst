@@ -6,13 +6,21 @@ import { datum } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
-function Kpi({ label, waarde, kleur = "text-londerzeel-inkt" }: { label: string; waarde: number | string; kleur?: string }) {
-  return (
-    <div className="card p-4">
+function Kpi({ label, waarde, kleur = "text-londerzeel-inkt", href }: { label: string; waarde: number | string; kleur?: string; href?: string }) {
+  const inhoud = (
+    <>
       <p className={`text-3xl font-bold ${kleur}`}>{waarde}</p>
       <p className="mt-1 text-sm text-gray-500">{label}</p>
-    </div>
+    </>
   );
+  if (href) {
+    return (
+      <Link href={href} className="card block p-4 transition-colors hover:border-londerzeel-geel hover:bg-londerzeel-geelLicht">
+        {inhoud}
+      </Link>
+    );
+  }
+  return <div className="card p-4">{inhoud}</div>;
 }
 
 export default async function Dashboard() {
@@ -41,18 +49,26 @@ export default async function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="text-sm text-gray-500">Operationeel overzicht van de uitleendienst</p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <p className="text-sm text-gray-500">Operationeel overzicht van de uitleendienst</p>
+        </div>
+        <Link href="/backoffice/dossiers?wachtrij=te_behandelen" className="btn-primary">
+          Aanvragen behandelen
+          {ingediend + inBehandeling > 0 && (
+            <span className="ml-1 rounded-full bg-white/40 px-1.5 text-xs">{ingediend + inBehandeling}</span>
+          )}
+        </Link>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
-        <Kpi label="Nieuw ingediend" waarde={ingediend} kleur="text-blue-600" />
-        <Kpi label="In behandeling" waarde={inBehandeling} kleur="text-amber-600" />
-        <Kpi label="Goedgekeurd / betaald" waarde={goedgekeurd} kleur="text-green-600" />
-        <Kpi label="In uitvoering / retour" waarde={teRetourneren} kleur="text-indigo-600" />
-        <Kpi label="Schade open" waarde={schade} kleur="text-rose-600" />
-        <Kpi label="Totaal dossiers" waarde={totaal} />
+        <Kpi label="Nieuw ingediend" waarde={ingediend} kleur="text-blue-600" href="/backoffice/dossiers?wachtrij=nieuw" />
+        <Kpi label="In behandeling" waarde={inBehandeling} kleur="text-amber-600" href="/backoffice/dossiers?wachtrij=te_behandelen" />
+        <Kpi label="Goedgekeurd / betaald" waarde={goedgekeurd} kleur="text-green-600" href="/backoffice/dossiers?status=GOEDGEKEURD" />
+        <Kpi label="In uitvoering / retour" waarde={teRetourneren} kleur="text-indigo-600" href="/backoffice/dossiers?wachtrij=uitvoering" />
+        <Kpi label="Schade open" waarde={schade} kleur="text-rose-600" href="/backoffice/dossiers?status=SCHADE_VASTGESTELD" />
+        <Kpi label="Totaal dossiers" waarde={totaal} href="/backoffice/dossiers?wachtrij=alle" />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
