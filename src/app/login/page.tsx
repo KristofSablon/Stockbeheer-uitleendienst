@@ -1,12 +1,33 @@
 "use client";
 
-import { useActionState } from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Logo } from "@/components/Merk";
-import { loginActie } from "./actions";
 
 export default function LoginPage() {
-  const [state, formAction, pending] = useActionState(loginActie, {});
+  const router = useRouter();
+  const [fout, setFout] = useState<string | undefined>();
+  const [pending, setPending] = useState(false);
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setPending(true);
+    setFout(undefined);
+    try {
+      const res = await fetch("/api/login", { method: "POST", body: new FormData(e.currentTarget) });
+      const data = (await res.json()) as { ok?: boolean; fout?: string };
+      if (data.ok) {
+        router.replace("/backoffice");
+        router.refresh();
+        return;
+      }
+      setFout(data.fout ?? "Aanmelden mislukt.");
+    } catch {
+      setFout("Er ging iets mis. Probeer opnieuw.");
+    }
+    setPending(false);
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-londerzeel-geelLicht px-4">
@@ -18,7 +39,7 @@ export default function LoginPage() {
           <h1 className="mb-1 text-xl font-semibold">Medewerker aanmelden</h1>
           <p className="mb-5 text-sm text-gray-500">Backoffice uitleendienst Londerzeel</p>
 
-          <form action={formAction} className="space-y-4">
+          <form onSubmit={onSubmit} className="space-y-4">
             <div>
               <label className="label" htmlFor="email">E-mailadres</label>
               <input id="email" name="email" type="email" autoComplete="username" className="input" placeholder="naam@londerzeel.be" required />
@@ -28,8 +49,8 @@ export default function LoginPage() {
               <input id="wachtwoord" name="wachtwoord" type="password" autoComplete="current-password" className="input" required />
             </div>
 
-            {state?.fout && (
-              <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{state.fout}</p>
+            {fout && (
+              <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{fout}</p>
             )}
 
             <button type="submit" className="btn-primary w-full" disabled={pending}>
