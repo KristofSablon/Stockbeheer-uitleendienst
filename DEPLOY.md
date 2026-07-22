@@ -84,8 +84,10 @@ Elke nieuwe push naar `main` zorgt automatisch voor een nieuwe deploy.
 
 ## Problemen oplossen
 
-- **Build mislukt met een databankfout** → de Postgres-databank was nog niet gekoppeld toen je
-  deployde. Doe stap 3, en klik dan **Redeploy**.
+- **Build mislukt met "Geen PostgreSQL-verbinding gevonden" of "Environment variable not found"** →
+  er is nog geen Postgres-databank gekoppeld aan het project. Doe stap 3 (Storage → Create Database →
+  Connect Project) en klik dan **Redeploy**. De build herkent automatisch de databank-variabelen,
+  ongeacht hun exacte naam (Vercel Postgres én de Neon-integratie worden ondersteund).
 - **Kan niet aanmelden na deploy** → controleer dat `SESSION_SECRET` is ingesteld (stap 4) en
   redeploy.
 - **Ik zie de repo niet in Vercel** → **Add New → Project → Adjust GitHub App Permissions** en geef
