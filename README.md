@@ -105,7 +105,11 @@ kunnen door de dienst gevalideerd/aangepast worden:
 
 ## Online zetten (deelbare link)
 
-Voor een deelbare demo op **Vercel** (met gratis PostgreSQL): zie **[DEPLOY.md](./DEPLOY.md)**.
+**Productie in de eigen Microsoft-omgeving** (Azure + aanmelden met gemeente-account via
+Entra ID + SharePoint-koppeling): zie **[DEPLOY-AZURE.md](./DEPLOY-AZURE.md)**. De afweging
+tegenover een low-code herbouw staat in **[docs/ONDERZOEK-SHAREPOINT.md](./docs/ONDERZOEK-SHAREPOINT.md)**.
+
+Voor een snelle deelbare demo op **Vercel** (met gratis PostgreSQL): zie **[DEPLOY.md](./DEPLOY.md)**.
 De app schakelt in productie automatisch over van SQLite naar PostgreSQL — het datamodel blijft op
 één plek staan (`prisma/schema.prisma`); enkel de databank verschilt. Het script `vercel-build`
 regelt schema, tabellen, basisdata en build.

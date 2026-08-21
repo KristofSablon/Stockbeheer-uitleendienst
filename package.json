@@ -15,13 +15,16 @@
     "db:studio": "prisma studio",
     "setup": "prisma generate && prisma db push && npm run db:seed",
     "prod:schema": "node scripts/gen-prod-schema.mjs",
-    "vercel-build": "node scripts/vercel-build.mjs"
+    "vercel-build": "node scripts/vercel-build.mjs",
+    "db:prod": "node scripts/db-prod.mjs",
+    "azure:build": "npm run prod:schema && prisma generate --schema=prisma/schema.prod.prisma && next build"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.2.1",
+    "jose": "^6.2.9",
     "next": "^15.5.20",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

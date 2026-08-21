@@ -46,17 +46,14 @@ export type Sessie = {
   rollen: string[];
 };
 
-// Meldt een gebruiker aan op basis van e-mail + wachtwoord.
-export async function aanmelden(email: string, wachtwoord: string): Promise<Sessie | null> {
-  const gebruiker = await prisma.gebruiker.findUnique({ where: { email: email.toLowerCase().trim() } });
-  if (!gebruiker || !gebruiker.actief) return null;
-  if (!verifieerWachtwoord(wachtwoord, gebruiker.wachtwoordHash)) return null;
-
-  const token = maakToken(gebruiker.id);
+// Start een sessie voor een reeds geverifieerde gebruiker (wachtwoord of SSO):
+// zet de ondertekende sessiecookie. Aanroeper is verantwoordelijk voor de verificatie.
+export async function startSessie(gebruikerId: string): Promise<void> {
+  const token = maakToken(gebruikerId);
   const cookieStore = await cookies();
 
-  // Detecteer of we achter een HTTPS-proxy draaien (bv. GitHub Codespaces, Gitpod).
-  // In die omgevingen wordt de app vaak in een ingebouwde preview (iframe) getoond,
+  // Detecteer of we achter een HTTPS-proxy draaien (bv. GitHub Codespaces, Azure).
+  // In die omgevingen wordt de app soms in een ingebedde weergave (iframe) getoond,
   // waar een SameSite=Lax-cookie niet meegestuurd wordt. Dan is SameSite=None + Secure
   // nodig. Lokaal (http) blijft het SameSite=Lax zonder Secure, anders wordt de cookie
   // op http://localhost helemaal niet bewaard.
@@ -71,6 +68,15 @@ export async function aanmelden(email: string, wachtwoord: string): Promise<Sess
     path: "/",
     maxAge: MAX_AGE,
   });
+}
+
+// Meldt een gebruiker aan op basis van e-mail + wachtwoord.
+export async function aanmelden(email: string, wachtwoord: string): Promise<Sessie | null> {
+  const gebruiker = await prisma.gebruiker.findUnique({ where: { email: email.toLowerCase().trim() } });
+  if (!gebruiker || !gebruiker.actief) return null;
+  if (!verifieerWachtwoord(wachtwoord, gebruiker.wachtwoordHash)) return null;
+
+  await startSessie(gebruiker.id);
 
   return {
     id: gebruiker.id,

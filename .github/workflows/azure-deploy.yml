@@ -1,0 +1,44 @@
+# Deploy naar Azure App Service bij elke push naar main.
+#
+# Activeren (zie DEPLOY-AZURE.md voor de volledige stappen):
+#   1. Repository variable AZURE_WEBAPP_NAME  → naam van de App Service (Settings → Variables)
+#   2. Secret AZURE_WEBAPP_PUBLISH_PROFILE    → inhoud van het publish-profiel (.PublishSettings)
+#   3. Secret AZURE_DATABASE_URL              → postgresql://... van Azure Database for PostgreSQL
+# Zolang AZURE_WEBAPP_NAME niet is ingesteld, slaat de workflow zichzelf over.
+
+name: Deploy naar Azure App Service
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-en-deploy:
+    if: ${{ vars.AZURE_WEBAPP_NAME != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Dependencies installeren
+        run: npm ci
+
+      - name: Productiebuild (PostgreSQL-schema)
+        run: npm run azure:build
+
+      - name: Databank bijwerken (tabellen + basisdata)
+        run: npm run db:prod
+        env:
+          DATABASE_URL: ${{ secrets.AZURE_DATABASE_URL }}
+
+      - name: Deploy naar App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ vars.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: .

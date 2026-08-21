@@ -19,6 +19,21 @@ const nextConfig = {
       ],
     },
   },
+  // Optioneel insluiten in SharePoint-pagina's: zet FRAME_ANCESTORS naar bv.
+  // "https://gemeente.sharepoint.com" om de app in een iframe toe te laten.
+  // Zonder deze variabele wordt er geen frame-beleid gezet (standaardgedrag).
+  async headers() {
+    const ancestors = process.env.FRAME_ANCESTORS;
+    if (!ancestors) return [];
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "Content-Security-Policy", value: `frame-ancestors 'self' ${ancestors}` },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
