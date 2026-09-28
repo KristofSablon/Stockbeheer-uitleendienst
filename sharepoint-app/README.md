@@ -23,8 +23,10 @@ Dat voegt `shell.html`, `app1.js` tot en met `app4.js` en de ingesloten biblioth
 
 ## Demo-modus
 
-Open het bestand buiten SharePoint, of voeg `?demo` toe aan het adres, en de app draait met
-voorbeeldgegevens in localStorage. Handig om te tonen en te testen zonder tenant.
+Open `Uitleendienst-demo.html` (zelfde build, maar met een extensie die je browser herkent) en de
+app draait lokaal met voorbeeldgegevens in localStorage. Binnen SharePoint kan het ook met `?demo`
+achter het adres. Het `.aspx`-bestand zelf opent lokaal niet, dat is normaal: die extensie bestaat
+voor SharePoint.
 
 ## Installatie in SharePoint
 

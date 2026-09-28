@@ -17,3 +17,9 @@ uit = shell.replace("/*XLSX*/", xlsx, 1).replace("/*APPJS*/", app, 1)
 doel = HIER / "Uitleendienst-app.aspx"
 doel.write_text(uit, encoding="utf-8")
 print(f"Geschreven: {doel} ({doel.stat().st_size/1024:.0f} kB)")
+
+# Zelfde app als .html, zodat je ze lokaal kunt openen: de browser herkent de
+# extensie en de app start dan vanzelf in demo-modus met voorbeeldgegevens.
+demo = HIER / "Uitleendienst-demo.html"
+demo.write_text(uit, encoding="utf-8")
+print(f"Geschreven: {demo} (demo-versie voor lokaal openen)")
