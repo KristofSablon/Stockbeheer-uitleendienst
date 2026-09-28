@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Uitleendienst Londerzeel</title>
+<style>
+:root{
+  --geel:#FBBB16; --geel-d:#E0A400; --geel-l:#FDECC0;
+  --inkt:#1A1A1A; --grijs:#F2F2F2; --lijn:#E2DFD8; --muted:#6E6A61;
+  --wit:#FFFFFF; --achtergrond:#FAF9F6;
+  --ok:#2E7D46; --ok-bg:#E7F2EA; --warn:#B07607; --warn-bg:#F8EEDC; --rood:#B3372E; --rood-bg:#F9E8E6;
+  --blauw:#2C5F9E; --blauw-bg:#E6EEF7;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--achtergrond);color:var(--inkt);
+  font:16px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+
+/* Kop */
+header{background:var(--wit);border-bottom:3px solid var(--geel);position:sticky;top:0;z-index:40}
+.kop{display:flex;align-items:center;gap:12px;padding:10px 16px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700}
+.logo .blok{width:34px;height:34px;border-radius:7px;background:var(--geel);color:var(--inkt);
+  display:flex;align-items:center;justify-content:center;font-weight:800}
+.logo small{display:block;font-weight:400;color:var(--muted);font-size:.72rem;line-height:1.1}
+.kop .rek{flex:1}
+#syncstip{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;color:var(--muted)}
+#syncstip .bol{width:10px;height:10px;border-radius:50%;background:var(--ok)}
+#syncstip.bezig .bol{background:var(--warn)} #syncstip.offline .bol{background:var(--rood)}
+#wie{font-size:.8rem;color:var(--muted);text-align:right;line-height:1.25}
+#wie b{color:var(--inkt)}
+
+/* Tabs */
+nav{display:flex;gap:2px;padding:0 10px;overflow-x:auto;background:var(--wit)}
+nav button{border:0;background:none;padding:10px 14px;font-size:.92rem;font-weight:600;color:var(--muted);
+  border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;min-height:44px}
+nav button.actief{color:var(--inkt);border-bottom-color:var(--geel)}
+nav button .tel{background:var(--rood);color:#fff;border-radius:99px;font-size:.7rem;padding:1px 6px;margin-left:4px}
+
+main{max-width:1100px;margin:0 auto;padding:16px}
+
+/* Bouwstenen */
+.kaart{background:var(--wit);border:1px solid var(--lijn);border-radius:10px;padding:16px;margin-bottom:14px}
+.kaart h2{margin:0 0 10px;font-size:1.05rem}
+.kaart h3{margin:14px 0 6px;font-size:.95rem}
+.rij{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+.veld{display:flex;flex-direction:column;gap:4px;min-width:0}
+.veld label{font-size:.78rem;font-weight:600;color:var(--muted)}
+input,select,textarea{border:1px solid var(--lijn);border-radius:8px;padding:9px 10px;background:var(--wit);
+  min-height:44px;width:100%}
+textarea{min-height:70px}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--geel);outline-offset:1px}
+.knop{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:8px;
+  padding:10px 16px;font-weight:600;cursor:pointer;min-height:44px;background:var(--geel);color:var(--inkt)}
+.knop:hover{background:var(--geel-d)}
+.knop.stil{background:var(--wit);border:1px solid var(--lijn);color:var(--inkt)}
+.knop.groen{background:var(--ok);color:#fff}
+.knop.rood{background:var(--rood);color:#fff}
+.knop.klein{padding:6px 10px;min-height:36px;font-size:.85rem}
+.knop[disabled]{opacity:.45;cursor:not-allowed}
+
+/* Tellers */
+.tellers{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.teller{background:var(--wit);border:1px solid var(--lijn);border-radius:10px;padding:12px;cursor:pointer}
+.teller b{display:block;font-size:1.6rem}
+.teller span{font-size:.8rem;color:var(--muted)}
+
+/* Tabellen */
+.tabelwrap{overflow-x:auto;border:1px solid var(--lijn);border-radius:10px;background:var(--wit)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th{background:var(--grijs);text-align:left;padding:9px 10px;font-size:.74rem;text-transform:uppercase;
+  letter-spacing:.05em;white-space:nowrap}
+td{padding:9px 10px;border-top:1px solid var(--lijn);vertical-align:top}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr.klik{cursor:pointer} tr.klik:hover{background:var(--geel-l)}
+
+/* Badges */
+.badge{display:inline-block;border-radius:99px;padding:2px 10px;font-size:.75rem;font-weight:600;white-space:nowrap}
+.b-grijs{background:var(--grijs);color:var(--muted)} .b-blauw{background:var(--blauw-bg);color:var(--blauw)}
+.b-geel{background:var(--geel-l);color:#8A6400} .b-groen{background:var(--ok-bg);color:var(--ok)}
+.b-rood{background:var(--rood-bg);color:var(--rood)} .b-warn{background:var(--warn-bg);color:var(--warn)}
+.b-paars{background:#EEE7F6;color:#6A3FA0} .b-teal{background:#E2F1F0;color:#1E6E66}
+
+.melding{border-radius:8px;padding:10px 12px;font-size:.9rem;margin:8px 0}
+.melding.info{background:var(--blauw-bg)} .melding.goed{background:var(--ok-bg)}
+.melding.let{background:var(--warn-bg)} .melding.fout{background:var(--rood-bg)}
+.stil-tekst{color:var(--muted);font-size:.85rem}
+
+/* Dossierkop */
+.dossierkop{display:flex;justify-content:space-between;gap:10px;align-items:start;flex-wrap:wrap}
+.dossierkop h2{margin:0;font-size:1.2rem;font-family:ui-monospace,Consolas,monospace}
+.acties{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+dl.info{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0;font-size:.92rem}
+dl.info dt{color:var(--muted)} dl.info dd{margin:0;font-weight:600}
+.twee{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.twee{grid-template-columns:1fr}}
+
+/* Modal */
+#sluier{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;z-index:60;padding:16px;overflow:auto}
+#sluier.open{display:flex;align-items:flex-start;justify-content:center}
+#modal{background:var(--wit);border-radius:12px;max-width:640px;width:100%;padding:18px;margin-top:4vh}
+
+/* Print: enkel het document */
+#drukvlak{display:none}
+@media print{
+  body>header,body>main,#sluier{display:none!important}
+  #drukvlak{display:block;font-size:12pt}
+  #drukvlak .dkop{display:flex;justify-content:space-between;border-bottom:3px solid #FBBB16;padding-bottom:8px;margin-bottom:14px}
+  #drukvlak table{width:100%;border-collapse:collapse;margin:10px 0}
+  #drukvlak th,#drukvlak td{border:1px solid #999;padding:6px 8px;text-align:left;font-size:10.5pt}
+  #drukvlak .handteken{display:flex;gap:40px;margin-top:36px}
+  #drukvlak .handteken div{flex:1;border-top:1px solid #000;padding-top:6px;font-size:10pt}
+}
+@media(max-width:600px){
+  main{padding:10px}
+  .kaart{padding:12px}
+  #wie{display:none}
+}
+</style>
+<script>/*XLSX*/</script>
+</head>
+<body>
+<header>
+  <div class="kop">
+    <div class="logo"><span class="blok">UL</span><span>Uitleendienst<small>Gemeente Londerzeel</small></span></div>
+    <div class="rek"></div>
+    <span id="syncstip"><span class="bol"></span><span id="synctekst">opgeslagen</span></span>
+    <div id="wie"></div>
+  </div>
+  <nav id="tabs"></nav>
+</header>
+<main id="app"></main>
+<div id="sluier"><div id="modal"></div></div>
+<div id="drukvlak"></div>
+<script>/*APPJS*/</script>
+</body>
+</html>
