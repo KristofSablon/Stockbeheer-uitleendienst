@@ -9,7 +9,7 @@ const S = {
   ik: { naam: "", email: "", rollen: [] },
   rollenIngesteld: false,   // staan er ROL:-regels in de instellingen?
   data: { UL_Materialen: [], UL_Dossiers: [], UL_Regels: [], UL_Instellingen: [] },
-  tab: "overzicht", dossierId: null, filter: "te_behandelen", zoek: "",
+  tab: "dashboard", dosTab: null, dossierId: null, filter: "te_behandelen", zoek: "",
   tempTeller: -1, laatsteBreedte: window.innerWidth,
 };
 
@@ -190,35 +190,38 @@ function zetStatus(dossier, naar, logTekst) {
 
 /* ── Navigatie en weergave ────────────────────────────────────────────── */
 const TABS = [
-  ["overzicht", "Aanvragen", () => true],
-  ["nieuw", "Nieuwe aanvraag", () => magBehandelen()],
-  ["beschikbaar", "Beschikbaarheid", () => true],
-  ["catalogus", "Catalogus", () => magIk("ADMIN", "BEHEERDER", "MAGAZIJNIER")],
-  ["beheer", "Beheer", () => magIk("BEHEERDER")],
-  ["opslag", "Opslag en installatie", () => true],
+  ["dashboard", "Dashboard", "▤", () => true],
+  ["overzicht", "Aanvragen behandelen", "▦", () => true],
+  ["nieuw", "Nieuwe aanvraag", "✎", () => magBehandelen()],
+  ["beschikbaar", "Beschikbaarheid", "▧", () => true],
+  ["catalogus", "Materiaalbeheer", "▣", () => magIk("ADMIN", "BEHEERDER", "MAGAZIJNIER")],
+  ["beheer", "Beheer en configuratie", "⚙", () => magIk("BEHEERDER")],
+  ["opslag", "Opslag en installatie", "⬡", () => true],
 ];
 function ga(tab, dossierId) {
-  S.tab = tab; if (dossierId !== undefined) S.dossierId = dossierId;
+  S.tab = tab;
+  if (dossierId !== undefined) { S.dossierId = dossierId; S.dosTab = null; }
   render();
   window.scrollTo(0, 0);
 }
 function tekenTabs() {
   const teBehandelen = S.data.UL_Dossiers.filter((d) => TE_BEHANDELEN.includes(d.UL_Status)).length;
-  document.getElementById("tabs").innerHTML = TABS.filter(([, , zicht]) => zicht()).map(([id, naam]) =>
+  document.getElementById("tabs").innerHTML = TABS.filter((t) => t[3]()).map(([id, naam, ikoon]) =>
     `<button data-tab="${id}" class="${S.tab === id || (id === "overzicht" && S.tab === "dossier") ? "actief" : ""}">
-      ${naam}${id === "overzicht" && teBehandelen ? `<span class="tel">${teBehandelen}</span>` : ""}</button>`).join("");
+      <span class="ikoon">${ikoon}</span>${naam}${id === "overzicht" && teBehandelen ? `<span class="tel">${teBehandelen}</span>` : ""}</button>`).join("");
 }
 function render() {
   tekenTabs();
   const app = document.getElementById("app");
   if (S.info && S.info.fataal) { app.innerHTML = schermInstallatieNodig(); return; }
-  const schermen = { overzicht: schermOverzicht, dossier: schermDossier, nieuw: schermNieuw,
-    beschikbaar: schermBeschikbaar, catalogus: schermCatalogus, beheer: schermBeheer, opslag: schermOpslag };
-  app.innerHTML = (schermen[S.tab] || schermOverzicht)();
+  const schermen = { dashboard: schermDashboard, overzicht: schermOverzicht, dossier: schermDossier,
+    nieuw: schermNieuw, beschikbaar: schermBeschikbaar, catalogus: schermCatalogus,
+    beheer: schermBeheer, opslag: schermOpslag };
+  app.innerHTML = (schermen[S.tab] || schermDashboard)();
   naRender();
 }
 
-/* ── Scherm: overzicht ────────────────────────────────────────────────── */
+/* ── Scherm: dashboard (zoals de webapp) ──────────────────────────────── */
 const FILTERS = {
   te_behandelen: ["Te behandelen", TE_BEHANDELEN],
   nieuw: ["Nieuw ingediend", ["INGEDIEND"]],
@@ -226,9 +229,50 @@ const FILTERS = {
   retour: ["Retour en controle", ["UITGELEVERD", "GERETOURNEERD", "IN_CONTROLE", "SCHADE_VASTGESTELD"]],
   alle: ["Alle", null],
 };
+function schermDashboard() {
+  const tel = (st) => S.data.UL_Dossiers.filter((d) => st.includes(d.UL_Status)).length;
+  const teBehandelen = tel(TE_BEHANDELEN);
+  const lopend = S.data.UL_Dossiers.filter((d) => !["AFGESLOTEN", "GEWEIGERD", "GEANNULEERD"].includes(d.UL_Status))
+    .sort((a, b) => (b.Id || 0) - (a.Id || 0)).slice(0, 8);
+  const gisteren = vandaagPlus(-1);
+  const binnenkort = S.data.UL_Dossiers.filter((d) => ["BEVESTIGD", "BETAALD", "KLAARGEZET"].includes(d.UL_Status)
+    && d.UL_Van && d.UL_Van >= gisteren).sort((a, b) => (a.UL_Van < b.UL_Van ? -1 : 1)).slice(0, 6);
+  return `
+  <div class="rij" style="justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div><h1 class="paginakop">Dashboard</h1>
+      <p class="subtitel" style="margin:0">Operationeel overzicht van de uitleendienst</p></div>
+    <button class="knop" data-filter="te_behandelen">Aanvragen behandelen${teBehandelen ? ` <span class="n" style="background:rgba(255,255,255,.55);border-radius:99px;padding:1px 8px;font-size:.75rem">${teBehandelen}</span>` : ""}</button>
+  </div>
+  <div class="tellers">
+    <div class="teller t-blauw" data-filter="nieuw"><b>${tel(["INGEDIEND"])}</b><span>Nieuw ingediend</span></div>
+    <div class="teller t-amber" data-filter="te_behandelen"><b>${teBehandelen}</b><span>Te behandelen</span></div>
+    <div class="teller t-teal" data-filter="uitvoering"><b>${tel(["BETAALD", "KLAARGEZET", "UITGELEVERD"])}</b><span>In uitvoering</span></div>
+    <div class="teller t-indigo" data-filter="retour"><b>${tel(["GERETOURNEERD", "IN_CONTROLE"])}</b><span>Retour en controle</span></div>
+    <div class="teller t-rose" data-filter="retour"><b>${tel(["SCHADE_VASTGESTELD"])}</b><span>Schade open</span></div>
+    <div class="teller" data-filter="alle"><b>${S.data.UL_Dossiers.length}</b><span>Alle dossiers</span></div>
+  </div>
+  <div class="twee">
+    <div class="kaart"><h2>Lopende dossiers</h2>
+      ${lopend.length ? `<div class="tabelwrap" style="border:0;box-shadow:none"><table><tbody>
+        ${lopend.map((d) => `<tr class="klik" data-dossier="${d.Id}">
+          <td><span class="mono">${esc(d.Title)}</span><div class="stil-tekst">${esc(d.UL_Aanvrager)} · ${esc(d.UL_Evenement)} · ${dDatum(d.UL_Van)}</div></td>
+          <td style="text-align:right">${statusBadge(d.UL_Status)}</td></tr>`).join("")}
+      </tbody></table></div>` : `<p class="stil-tekst">Geen lopende dossiers.</p>`}
+    </div>
+    <div class="kaart"><h2>Binnenkort uit te voeren</h2>
+      ${binnenkort.length ? `<div class="tabelwrap" style="border:0;box-shadow:none"><table><tbody>
+        ${binnenkort.map((d) => `<tr class="klik" data-dossier="${d.Id}">
+          <td><b>${esc(d.UL_Aanvrager)}</b><div class="stil-tekst">${esc(d.Title)} · ${esc(d.UL_Leveringswijze)}</div></td>
+          <td style="text-align:right;white-space:nowrap">${dDatum(d.UL_Van)}</td></tr>`).join("")}
+      </tbody></table></div>` : `<p class="stil-tekst">Geen geplande leveringen of afhalingen.</p>`}
+    </div>
+  </div>`;
+}
+
+/* ── Scherm: aanvragen behandelen ─────────────────────────────────────── */
 function schermOverzicht() {
-  const tel = (statussen) => S.data.UL_Dossiers.filter((d) => !statussen || statussen.includes(d.UL_Status)).length;
-  let dossiers = S.data.UL_Dossiers.filter((d) => {
+  const tel = (st) => S.data.UL_Dossiers.filter((d) => !st || st.includes(d.UL_Status)).length;
+  const dossiers = S.data.UL_Dossiers.filter((d) => {
     const f = FILTERS[S.filter][1];
     if (f && !f.includes(d.UL_Status)) return false;
     if (S.zoek) {
@@ -237,28 +281,24 @@ function schermOverzicht() {
     }
     return true;
   }).sort((a, b) => (b.Id || 0) - (a.Id || 0));
-
   return `
-  <div class="tellers">${Object.entries(FILTERS).map(([id, [naam, st]]) =>
-    `<div class="teller" data-filter="${id}"><b>${tel(st)}</b><span>${naam}</span></div>`).join("")}
+  <h1 class="paginakop">Aanvragen behandelen</h1>
+  <p class="subtitel">Hier volg je de binnengekomen aanvragen op: voorraadcontrole, goedkeuren of weigeren, kosten en betaling, uitvoering en retour.</p>
+  <div class="chips">${Object.entries(FILTERS).map(([id, [naam, st]]) =>
+    `<button class="chip ${S.filter === id ? "actief" : ""}" data-filter="${id}">${naam}<span class="n">${tel(st)}</span></button>`).join("")}
   </div>
-  <div class="kaart">
-    <div class="rij">
-      <div class="veld" style="flex:1"><label>Zoeken</label>
-        <input id="zoekveld" value="${esc(S.zoek)}" placeholder="Referentie, vereniging of evenement"></div>
-      <span class="badge b-geel" style="align-self:center">${esc(FILTERS[S.filter][0])}</span>
-    </div>
-  </div>
+  <div class="kaart"><div class="veld"><label>Zoeken</label>
+    <input id="zoekveld" value="${esc(S.zoek)}" placeholder="Referentie, vereniging of evenement"></div></div>
   <div class="tabelwrap"><table>
     <thead><tr><th>Referentie</th><th>Aanvrager</th><th>Evenement</th><th>Periode</th><th>Status</th><th></th></tr></thead>
     <tbody>${dossiers.length ? dossiers.map((d) => `
       <tr class="klik" data-dossier="${d.Id}">
-        <td style="font-family:ui-monospace,Consolas,monospace;font-weight:600">${esc(d.Title)}</td>
+        <td class="mono">${esc(d.Title)}</td>
         <td>${esc(d.UL_Aanvrager)}</td><td>${esc(d.UL_Evenement)}</td>
         <td style="white-space:nowrap">${dDatum(d.UL_Van)} tot ${dDatum(d.UL_Tot)}</td>
         <td>${statusBadge(d.UL_Status)}</td>
-        <td><button class="knop klein ${TE_BEHANDELEN.includes(d.UL_Status) && magBehandelen() ? "" : "stil"}" data-dossier="${d.Id}">
-          ${TE_BEHANDELEN.includes(d.UL_Status) && magBehandelen() ? "Behandelen" : "Openen"}</button></td>
+        <td style="text-align:right"><button class="knop klein ${TE_BEHANDELEN.includes(d.UL_Status) && magBehandelen() ? "" : "stil"}" data-dossier="${d.Id}">
+          ${TE_BEHANDELEN.includes(d.UL_Status) && magBehandelen() ? "Behandelen →" : "Openen →"}</button></td>
       </tr>`).join("") :
       `<tr><td colspan="6" class="stil-tekst" style="text-align:center;padding:24px">Geen aanvragen in deze selectie.</td></tr>`}
     </tbody>

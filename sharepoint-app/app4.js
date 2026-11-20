@@ -151,10 +151,11 @@ function naRender() {
 }
 
 document.addEventListener("click", async (ev) => {
-  const el = ev.target.closest("[data-actie],[data-tab],[data-filter],tr[data-dossier]");
+  const el = ev.target.closest("[data-actie],[data-tab],[data-filter],[data-dostab],tr[data-dossier]");
   if (!el) return;
   if (el.dataset.tab) return ga(el.dataset.tab);
-  if (el.dataset.filter) { S.filter = el.dataset.filter; return render(); }
+  if (el.dataset.dostab) { S.dosTab = el.dataset.dostab; return render(); }
+  if (el.dataset.filter) { S.filter = el.dataset.filter; S.tab = "overzicht"; return render(); }
   if (el.dataset.dossier && !el.dataset.actie) { ev.preventDefault(); return ga("dossier", Q.echtId(+el.dataset.dossier)); }
 
   const d = S.data.UL_Dossiers.find((x) => x.Id === S.dossierId);

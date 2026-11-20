@@ -31,10 +31,10 @@ const OVERGANGEN = {
   AFGESLOTEN: [], GEANNULEERD: [],
 };
 const STATUS_BADGE = {
-  INGEDIEND: "b-blauw", IN_BEHANDELING: "b-geel", WACHT_OP_AANVULLING: "b-warn", GOEDGEKEURD: "b-groen",
-  GEWEIGERD: "b-rood", BEVESTIGD: "b-paars", BETAALD: "b-teal", KLAARGEZET: "b-teal", UITGELEVERD: "b-blauw",
-  GERETOURNEERD: "b-geel", IN_CONTROLE: "b-warn", SCHADE_VASTGESTELD: "b-rood",
-  AFGESLOTEN: "b-grijs", GEANNULEERD: "b-grijs",
+  INGEDIEND: "b-blauw", IN_BEHANDELING: "b-amber", WACHT_OP_AANVULLING: "b-oranje", GOEDGEKEURD: "b-groen",
+  GEWEIGERD: "b-rood", BEVESTIGD: "b-paars", BETAALD: "b-teal", KLAARGEZET: "b-cyaan", UITGELEVERD: "b-indigo",
+  GERETOURNEERD: "b-lime", IN_CONTROLE: "b-geel", SCHADE_VASTGESTELD: "b-rose",
+  AFGESLOTEN: "b-grijs", GEANNULEERD: "b-licht",
 };
 // Statussen waarvan de reservatie de voorraad bezet houdt.
 const BEZET_STATUS = ["GOEDGEKEURD", "BEVESTIGD", "BETAALD", "KLAARGEZET", "UITGELEVERD", "GERETOURNEERD", "IN_CONTROLE"];

@@ -1,7 +1,9 @@
 import { chromium } from "playwright-core";
 import { maakMock, PAGINA } from "./mock.mjs";
 
-const CHROME = "/opt/pw-browsers/chromium-1194/chrome-linux/chrome";
+import fs from "node:fs";
+const basis = "/opt/pw-browsers/" + fs.readdirSync("/opt/pw-browsers").find((d) => /^chromium-\d+$/.test(d));
+const CHROME = fs.readdirSync(basis).map((sub) => `${basis}/${sub}/chrome`).find((pad) => fs.existsSync(pad));
 let geslaagd = 0, gefaald = 0;
 const ok = (naam, cond, extra) => { console.log((cond ? "✔" : "✗") + " " + naam + (cond ? "" : "  " + (extra || ""))); cond ? geslaagd++ : gefaald++; };
 const wachtTot = async (fn, ms = 8000) => { const tot = Date.now() + ms; while (Date.now() < tot) { if (await fn()) return true; await new Promise((r) => setTimeout(r, 150)); } return false; };

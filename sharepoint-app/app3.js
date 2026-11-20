@@ -98,7 +98,6 @@ function aanvraagIndienen() {
 function schermDossier() {
   const d = S.data.UL_Dossiers.find((x) => x.Id === S.dossierId);
   if (!d) return `<div class="melding fout">Dit dossier is niet gevonden. Ga terug naar het overzicht.</div>`;
-  const check = stockcheck(d);
   const kosten = berekenKosten(d);
   const behandelbaar = ["IN_BEHANDELING", "WACHT_OP_AANVULLING"].includes(d.UL_Status);
   const magUitvoeren = magIk("ADMIN", "BEHEERDER", "TECHNISCH", "MAGAZIJNIER", "PLOEGBAAS");
@@ -125,15 +124,16 @@ function schermDossier() {
     if (d.UL_Status === "GERETOURNEERD") actieKnoppen.push(`<button class="knop" data-actie="status" data-naar="IN_CONTROLE">Start controle</button>`);
     if (d.UL_Status === "SCHADE_VASTGESTELD" && magBehandelen()) actieKnoppen.push(`<button class="knop" data-actie="status" data-naar="AFGESLOTEN">Dossier afsluiten</button>`);
   }
-  if (["KLAARGEZET", "UITGELEVERD", "GERETOURNEERD", "IN_CONTROLE", "SCHADE_VASTGESTELD", "AFGESLOTEN"].includes(d.UL_Status))
-    actieKnoppen.push(`<button class="knop stil" data-actie="print-ontvangst">Ontvangstbewijs afdrukken</button>`);
-  if (["IN_CONTROLE", "SCHADE_VASTGESTELD", "AFGESLOTEN"].includes(d.UL_Status))
-    actieKnoppen.push(`<button class="knop stil" data-actie="print-retour">Retourformulier afdrukken</button>`);
   if (magBehandelen() && kan("GEANNULEERD"))
     actieKnoppen.push(`<button class="knop stil" data-actie="annuleren">Annuleren</button>`);
 
+  const tabs = [["behandeling", "Materialen & behandeling"], ["retour", "Retour & documenten"], ["historiek", "Historiek"]];
+  const standaard = ["IN_CONTROLE", "SCHADE_VASTGESTELD", "AFGESLOTEN"].includes(d.UL_Status) ? "retour"
+    : ["GEWEIGERD", "GEANNULEERD"].includes(d.UL_Status) ? "historiek" : "behandeling";
+  const dosTab = S.dosTab || standaard;
+
   return `
-  <p><a href="#" data-actie="terug">&larr; Terug naar het overzicht</a></p>
+  <p style="margin:0 0 10px"><a href="#" data-actie="terug">&larr; Terug naar het overzicht</a></p>
   <div class="kaart">
     <div class="dossierkop">
       <div><h2>${esc(d.Title)}</h2><div class="stil-tekst">${esc(d.UL_Aanvrager)} &middot; ${esc(d.UL_Evenement)}</div></div>
@@ -159,11 +159,18 @@ function schermDossier() {
       </dl>
     </div>
     ${d.UL_Opmerkingen ? `<p class="stil-tekst" style="margin-bottom:0"><b>Opmerkingen:</b> ${esc(d.UL_Opmerkingen)}</p>` : ""}
-    <div class="acties">${actieKnoppen.join("")}</div>
+    ${actieKnoppen.length ? `<div class="acties">${actieKnoppen.join("")}</div>` : ""}
   </div>
+  <div class="dostabs">${tabs.map(([id, naam]) =>
+    `<button data-dostab="${id}" class="${dosTab === id ? "actief" : ""}">${naam}</button>`).join("")}</div>
+  ${dosTab === "behandeling" ? blokBehandeling(d, behandelbaar) : dosTab === "retour" ? blokRetour(d, magRetour) : blokHistoriek(d)}`;
+}
 
-  <div class="kaart"><h2>Materiaal en voorraadcontrole</h2>
-    <div class="tabelwrap"><table>
+function blokBehandeling(d, behandelbaar) {
+  const check = stockcheck(d);
+  return `<div class="kaart"><h2>Materialen en voorraadcontrole</h2>
+    <p class="stil-tekst">Beschikbaarheid berekend voor ${dDatum(d.UL_Van)} tot ${dDatum(d.UL_Tot)}, rekening houdend met andere dossiers.</p>
+    <div class="tabelwrap" style="margin-top:8px"><table>
       <thead><tr><th>Materiaal</th><th class="num">Gevraagd</th><th class="num">Beschikbaar</th>
         <th class="num">${behandelbaar && magBehandelen() ? "Toe te kennen" : "Toegekend"}</th><th>Controle</th></tr></thead>
       <tbody>${check.map((c) => `
@@ -174,16 +181,40 @@ function schermDossier() {
             ? `<input type="number" min="0" data-toeken="${c.regel.Id}" value="${c.regel.UL_Toegekend || c.regel.UL_Gevraagd}" style="text-align:right;max-width:90px">`
             : (c.regel.UL_Toegekend || "&mdash;")}</td>
           <td>${c.voldoende ? `<span class="badge b-groen">voldoende</span>`
-            : c.bovenLimiet ? `<span class="badge b-warn">boven limiet van ${c.limiet}</span>`
+            : c.bovenLimiet ? `<span class="badge b-amber">boven limiet van ${c.limiet}</span>`
             : `<span class="badge b-rood">tekort</span>`}</td></tr>`).join("")}
       </tbody>
     </table></div>
-  </div>
+  </div>`;
+}
 
-  ${d.UL_Status === "IN_CONTROLE" && magRetour ? schermRetourControle(d) : ""}
+function blokRetour(d, magRetour) {
+  const printKnoppen = [];
+  if (["KLAARGEZET", "UITGELEVERD", "GERETOURNEERD", "IN_CONTROLE", "SCHADE_VASTGESTELD", "AFGESLOTEN"].includes(d.UL_Status))
+    printKnoppen.push(`<button class="knop stil" data-actie="print-ontvangst">Ontvangstbewijs afdrukken</button>`);
+  if (["IN_CONTROLE", "SCHADE_VASTGESTELD", "AFGESLOTEN"].includes(d.UL_Status))
+    printKnoppen.push(`<button class="knop stil" data-actie="print-retour">Retourformulier afdrukken</button>`);
 
-  <div class="kaart"><h2>Historiek</h2>
-    <pre style="white-space:pre-wrap;font:inherit;font-size:.85rem;color:var(--muted);margin:0">${esc(d.UL_Log || "Nog geen historiek.")}</pre>
+  let inhoud;
+  if (d.UL_Status === "IN_CONTROLE" && magRetour) {
+    inhoud = schermRetourControle(d);
+  } else {
+    const regels = regelsVan(d.Id).filter((r) => r.UL_Retour);
+    inhoud = regels.length ? `<div class="kaart"><h2>Retourcontrole</h2>
+      <div class="tabelwrap"><table>
+        <thead><tr><th>Materiaal</th><th class="num">Aantal</th><th>Beoordeling</th><th>Opmerking</th><th class="num">Kost</th></tr></thead>
+        <tbody>${regels.map((r) => `<tr><td>${esc(r.Title)}</td><td class="num">${r.UL_Toegekend || r.UL_Gevraagd}</td>
+          <td>${r.UL_Retour === "SCHADE" ? `<span class="badge b-rose">schade</span>` : `<span class="badge b-groen">goed</span>`}</td>
+          <td>${esc(r.UL_RetourOpm || "")}</td><td class="num">${r.UL_SchadeKost ? euro(r.UL_SchadeKost) : "&mdash;"}</td></tr>`).join("")}
+        </tbody></table></div></div>`
+      : `<div class="kaart"><p class="stil-tekst" style="margin:0">Nog geen retour. De controle start zodra het materiaal terug is (zie de knoppen bovenaan het dossier).</p></div>`;
+  }
+  return `${inhoud}${printKnoppen.length ? `<div class="acties" style="margin-top:0">${printKnoppen.join("")}</div>` : ""}`;
+}
+
+function blokHistoriek(d) {
+  return `<div class="kaart"><h2>Historiek</h2>
+    <pre style="white-space:pre-wrap;font:inherit;font-size:.84rem;color:var(--muted);margin:0">${esc(d.UL_Log || "Nog geen historiek.")}</pre>
   </div>`;
 }
 

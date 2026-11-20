@@ -7,95 +7,124 @@
 <style>
 :root{
   --geel:#FBBB16; --geel-d:#E0A400; --geel-l:#FDECC0;
-  --inkt:#1A1A1A; --grijs:#F2F2F2; --lijn:#E2DFD8; --muted:#6E6A61;
-  --wit:#FFFFFF; --achtergrond:#FAF9F6;
-  --ok:#2E7D46; --ok-bg:#E7F2EA; --warn:#B07607; --warn-bg:#F8EEDC; --rood:#B3372E; --rood-bg:#F9E8E6;
-  --blauw:#2C5F9E; --blauw-bg:#E6EEF7;
+  --inkt:#1A1A1A; --grijs:#F3F4F6; --lijn:#E5E7EB; --muted:#6B7280;
+  --wit:#FFFFFF; --achtergrond:#F9FAFB;
+  --ok:#16A34A; --warn:#B45309; --rood:#DC2626; --blauw:#2563EB;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--achtergrond);color:var(--inkt);
-  font:16px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+  font:15px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
 button,input,select,textarea{font:inherit;color:inherit}
+a{color:inherit}
 
-/* Kop */
-header{background:var(--wit);border-bottom:3px solid var(--geel);position:sticky;top:0;z-index:40}
-.kop{display:flex;align-items:center;gap:12px;padding:10px 16px;flex-wrap:wrap}
-.logo{display:flex;align-items:center;gap:10px;font-weight:700}
-.logo .blok{width:34px;height:34px;border-radius:7px;background:var(--geel);color:var(--inkt);
+/* Kopbalk zoals de webapp: wit met een fijne rand */
+header{background:var(--wit);border-bottom:1px solid var(--lijn);position:sticky;top:0;z-index:40}
+.kop{display:flex;align-items:center;gap:12px;padding:10px 18px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:600}
+.logo .blok{width:36px;height:36px;border-radius:8px;background:var(--geel);color:var(--inkt);
   display:flex;align-items:center;justify-content:center;font-weight:800}
 .logo small{display:block;font-weight:400;color:var(--muted);font-size:.72rem;line-height:1.1}
 .kop .rek{flex:1}
-#syncstip{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;color:var(--muted)}
-#syncstip .bol{width:10px;height:10px;border-radius:50%;background:var(--ok)}
+#syncstip{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted);white-space:nowrap}
+#syncstip .bol{width:9px;height:9px;border-radius:50%;background:var(--ok)}
 #syncstip.bezig .bol{background:var(--warn)} #syncstip.offline .bol{background:var(--rood)}
-#wie{font-size:.8rem;color:var(--muted);text-align:right;line-height:1.25}
-#wie b{color:var(--inkt)}
+#wie{font-size:.78rem;color:var(--muted);text-align:right;line-height:1.3;max-width:340px}
+#wie b{color:var(--inkt);font-size:.85rem}
 
-/* Tabs */
-nav{display:flex;gap:2px;padding:0 10px;overflow-x:auto;background:var(--wit)}
-nav button{border:0;background:none;padding:10px 14px;font-size:.92rem;font-weight:600;color:var(--muted);
-  border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;min-height:44px}
-nav button.actief{color:var(--inkt);border-bottom-color:var(--geel)}
-nav button .tel{background:var(--rood);color:#fff;border-radius:99px;font-size:.7rem;padding:1px 6px;margin-left:4px}
+/* Indeling: menu links, inhoud rechts (zoals de webapp) */
+.raam{max-width:1280px;margin:0 auto;display:flex;gap:24px;padding:20px 18px;align-items:flex-start}
+aside{width:230px;flex:none;position:sticky;top:76px}
+nav{display:flex;flex-direction:column;gap:3px}
+nav button{display:flex;align-items:center;gap:10px;border:0;background:none;text-align:left;
+  padding:9px 12px;font-size:.9rem;font-weight:600;color:#374151;border-radius:8px;cursor:pointer;min-height:42px}
+nav button .ikoon{width:20px;text-align:center;flex:none}
+nav button:hover{background:var(--grijs)}
+nav button.actief{background:var(--geel);color:var(--inkt)}
+nav button .tel{margin-left:auto;background:var(--rood);color:#fff;border-radius:99px;font-size:.68rem;
+  font-weight:700;padding:1px 7px}
+main{flex:1;min-width:0}
 
-main{max-width:1100px;margin:0 auto;padding:16px}
+/* Titels zoals de webapp */
+.paginakop{margin:0 0 4px;font-size:1.45rem;font-weight:800;letter-spacing:-.01em}
+.subtitel{margin:0 0 16px;font-size:.85rem;color:var(--muted)}
 
 /* Bouwstenen */
-.kaart{background:var(--wit);border:1px solid var(--lijn);border-radius:10px;padding:16px;margin-bottom:14px}
-.kaart h2{margin:0 0 10px;font-size:1.05rem}
-.kaart h3{margin:14px 0 6px;font-size:.95rem}
+.kaart{background:var(--wit);border:1px solid var(--lijn);border-radius:10px;padding:16px;margin-bottom:14px;
+  box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.kaart h2{margin:0 0 10px;font-size:1rem}
+.kaart h3{margin:14px 0 6px;font-size:.9rem}
 .rij{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
 .veld{display:flex;flex-direction:column;gap:4px;min-width:0}
-.veld label{font-size:.78rem;font-weight:600;color:var(--muted)}
-input,select,textarea{border:1px solid var(--lijn);border-radius:8px;padding:9px 10px;background:var(--wit);
-  min-height:44px;width:100%}
+.veld label{font-size:.76rem;font-weight:600;color:#374151}
+input,select,textarea{border:1px solid #D1D5DB;border-radius:8px;padding:8px 10px;background:var(--wit);
+  min-height:42px;width:100%;font-size:.9rem}
 textarea{min-height:70px}
 input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--geel);outline-offset:1px}
 .knop{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:8px;
-  padding:10px 16px;font-weight:600;cursor:pointer;min-height:44px;background:var(--geel);color:var(--inkt)}
+  padding:9px 16px;font-size:.88rem;font-weight:600;cursor:pointer;min-height:42px;background:var(--geel);color:var(--inkt)}
 .knop:hover{background:var(--geel-d)}
-.knop.stil{background:var(--wit);border:1px solid var(--lijn);color:var(--inkt)}
+.knop.stil{background:var(--wit);border:1px solid #D1D5DB;color:#374151}
+.knop.stil:hover{background:var(--grijs)}
 .knop.groen{background:var(--ok);color:#fff}
 .knop.rood{background:var(--rood);color:#fff}
-.knop.klein{padding:6px 10px;min-height:36px;font-size:.85rem}
+.knop.klein{padding:5px 11px;min-height:34px;font-size:.8rem}
 .knop[disabled]{opacity:.45;cursor:not-allowed}
 
-/* Tellers */
-.tellers{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
-.teller{background:var(--wit);border:1px solid var(--lijn);border-radius:10px;padding:12px;cursor:pointer}
-.teller b{display:block;font-size:1.6rem}
-.teller span{font-size:.8rem;color:var(--muted)}
+/* Kerncijfers op het dashboard, zoals de webapp */
+.tellers{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.teller{background:var(--wit);border:1px solid var(--lijn);border-radius:10px;padding:14px;cursor:pointer;
+  box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.teller:hover{border-color:var(--geel);background:var(--geel-l)}
+.teller b{display:block;font-size:1.75rem;line-height:1.1}
+.teller span{font-size:.78rem;color:var(--muted)}
+.t-blauw b{color:#2563EB}.t-amber b{color:#D97706}.t-teal b{color:#0D9488}.t-indigo b{color:#4F46E5}.t-rose b{color:#E11D48}
+.twee{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* Filterchips zoals de webapp */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.chip{display:inline-flex;align-items:center;gap:7px;border-radius:99px;border:1px solid #D1D5DB;
+  background:var(--wit);padding:7px 14px;font-size:.84rem;font-weight:600;color:#374151;cursor:pointer;min-height:38px}
+.chip.actief{background:var(--geel);border-color:var(--geel);color:var(--inkt)}
+.chip .n{background:rgba(0,0,0,.08);border-radius:99px;font-size:.72rem;padding:1px 7px}
+.chip.actief .n{background:rgba(255,255,255,.5)}
 
 /* Tabellen */
-.tabelwrap{overflow-x:auto;border:1px solid var(--lijn);border-radius:10px;background:var(--wit)}
-table{border-collapse:collapse;width:100%;font-size:.92rem}
-th{background:var(--grijs);text-align:left;padding:9px 10px;font-size:.74rem;text-transform:uppercase;
-  letter-spacing:.05em;white-space:nowrap}
-td{padding:9px 10px;border-top:1px solid var(--lijn);vertical-align:top}
+.tabelwrap{overflow-x:auto;border:1px solid var(--lijn);border-radius:10px;background:var(--wit);
+  box-shadow:0 1px 2px rgba(0,0,0,.04)}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th{background:#F9FAFB;text-align:left;padding:9px 12px;font-size:.7rem;text-transform:uppercase;
+  letter-spacing:.05em;color:var(--muted);white-space:nowrap;border-bottom:1px solid var(--lijn)}
+td{padding:10px 12px;border-top:1px solid #F3F4F6;vertical-align:top}
 td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
-tr.klik{cursor:pointer} tr.klik:hover{background:var(--geel-l)}
+tr.klik{cursor:pointer} tr.klik:hover{background:#FEF8E7}
+.mono{font-family:ui-monospace,Consolas,monospace;font-weight:600}
 
-/* Badges */
-.badge{display:inline-block;border-radius:99px;padding:2px 10px;font-size:.75rem;font-weight:600;white-space:nowrap}
-.b-grijs{background:var(--grijs);color:var(--muted)} .b-blauw{background:var(--blauw-bg);color:var(--blauw)}
-.b-geel{background:var(--geel-l);color:#8A6400} .b-groen{background:var(--ok-bg);color:var(--ok)}
-.b-rood{background:var(--rood-bg);color:var(--rood)} .b-warn{background:var(--warn-bg);color:var(--warn)}
-.b-paars{background:#EEE7F6;color:#6A3FA0} .b-teal{background:#E2F1F0;color:#1E6E66}
+/* Statusbadges met de kleuren van de webapp */
+.badge{display:inline-block;border-radius:99px;padding:2px 10px;font-size:.73rem;font-weight:600;white-space:nowrap}
+.b-blauw{background:#DBEAFE;color:#1E40AF}.b-amber{background:#FEF3C7;color:#92400E}
+.b-oranje{background:#FFEDD5;color:#9A3412}.b-groen{background:#DCFCE7;color:#166534}
+.b-rood{background:#FEE2E2;color:#991B1B}.b-paars{background:#F3E8FF;color:#6B21A8}
+.b-teal{background:#CCFBF1;color:#115E59}.b-cyaan{background:#CFFAFE;color:#155E75}
+.b-indigo{background:#E0E7FF;color:#3730A3}.b-lime{background:#ECFCCB;color:#3F6212}
+.b-geel{background:#FEF9C3;color:#854D0E}.b-rose{background:#FFE4E6;color:#9F1239}
+.b-grijs{background:#E5E7EB;color:#374151}.b-licht{background:#F3F4F6;color:#6B7280}
 
-.melding{border-radius:8px;padding:10px 12px;font-size:.9rem;margin:8px 0}
-.melding.info{background:var(--blauw-bg)} .melding.goed{background:var(--ok-bg)}
-.melding.let{background:var(--warn-bg)} .melding.fout{background:var(--rood-bg)}
-.stil-tekst{color:var(--muted);font-size:.85rem}
+.melding{border-radius:8px;padding:10px 12px;font-size:.87rem;margin:8px 0}
+.melding.info{background:#DBEAFE}.melding.goed{background:#DCFCE7}
+.melding.let{background:#FEF3C7}.melding.fout{background:#FEE2E2;color:#991B1B}
+.stil-tekst{color:var(--muted);font-size:.82rem}
 
-/* Dossierkop */
-.dossierkop{display:flex;justify-content:space-between;gap:10px;align-items:start;flex-wrap:wrap}
-.dossierkop h2{margin:0;font-size:1.2rem;font-family:ui-monospace,Consolas,monospace}
-.acties{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-dl.info{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0;font-size:.92rem}
-dl.info dt{color:var(--muted)} dl.info dd{margin:0;font-weight:600}
-.twee{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:760px){.twee{grid-template-columns:1fr}}
+/* Dossier: kop en tabbladen zoals de webapp */
+.dossierkop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.dossierkop h2{margin:0;font-size:1.3rem;font-family:ui-monospace,Consolas,monospace}
+.acties{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+dl.info{display:grid;grid-template-columns:auto 1fr;gap:5px 16px;margin:0;font-size:.88rem}
+dl.info dt{color:var(--muted)} dl.info dd{margin:0;font-weight:600;text-align:right}
+.dostabs{display:flex;gap:2px;border-bottom:1px solid var(--lijn);margin:4px 0 14px;overflow-x:auto}
+.dostabs button{border:0;background:none;padding:9px 14px;font-size:.87rem;font-weight:600;color:var(--muted);
+  border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;min-height:42px}
+.dostabs button.actief{color:var(--inkt);border-bottom-color:var(--geel)}
 
 /* Modal */
 #sluier{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;z-index:60;padding:16px;overflow:auto}
@@ -105,7 +134,7 @@ dl.info dt{color:var(--muted)} dl.info dd{margin:0;font-weight:600}
 /* Print: enkel het document */
 #drukvlak{display:none}
 @media print{
-  body>header,body>main,#sluier{display:none!important}
+  body>header,.raam,#sluier{display:none!important}
   #drukvlak{display:block;font-size:12pt}
   #drukvlak .dkop{display:flex;justify-content:space-between;border-bottom:3px solid #FBBB16;padding-bottom:8px;margin-bottom:14px}
   #drukvlak table{width:100%;border-collapse:collapse;margin:10px 0}
@@ -113,10 +142,20 @@ dl.info dt{color:var(--muted)} dl.info dd{margin:0;font-weight:600}
   #drukvlak .handteken{display:flex;gap:40px;margin-top:36px}
   #drukvlak .handteken div{flex:1;border-top:1px solid #000;padding-top:6px;font-size:10pt}
 }
+
+/* Tablet en telefoon: menu bovenaan, grotere knoppen blijven */
+@media(max-width:960px){
+  .raam{flex-direction:column;gap:12px;padding:12px}
+  aside{width:100%;position:static}
+  nav{flex-direction:row;overflow-x:auto;background:var(--wit);border:1px solid var(--lijn);
+    border-radius:10px;padding:5px;gap:3px}
+  nav button{white-space:nowrap;min-height:44px}
+  nav button .tel{margin-left:6px}
+  .twee{grid-template-columns:1fr}
+}
 @media(max-width:600px){
-  main{padding:10px}
-  .kaart{padding:12px}
   #wie{display:none}
+  dl.info dd{text-align:left}
 }
 </style>
 <script>/*! xlsx.js (C) 2013-present SheetJS -- http://sheetjs.com */
@@ -138,9 +177,11 @@ break;case"<bookViews":;case"<bookViews>":;case"</bookViews>":break;case"<workbo
     <span id="syncstip"><span class="bol"></span><span id="synctekst">opgeslagen</span></span>
     <div id="wie"></div>
   </div>
-  <nav id="tabs"></nav>
 </header>
-<main id="app"></main>
+<div class="raam">
+  <aside><nav id="tabs"></nav></aside>
+  <main id="app"></main>
+</div>
 <div id="sluier"><div id="modal"></div></div>
 <div id="drukvlak"></div>
 <script>/* Uitleendienst Londerzeel, deel 1: vaste gegevens, hulpjes en opslag-adapters. */
@@ -176,10 +217,10 @@ const OVERGANGEN = {
   AFGESLOTEN: [], GEANNULEERD: [],
 };
 const STATUS_BADGE = {
-  INGEDIEND: "b-blauw", IN_BEHANDELING: "b-geel", WACHT_OP_AANVULLING: "b-warn", GOEDGEKEURD: "b-groen",
-  GEWEIGERD: "b-rood", BEVESTIGD: "b-paars", BETAALD: "b-teal", KLAARGEZET: "b-teal", UITGELEVERD: "b-blauw",
-  GERETOURNEERD: "b-geel", IN_CONTROLE: "b-warn", SCHADE_VASTGESTELD: "b-rood",
-  AFGESLOTEN: "b-grijs", GEANNULEERD: "b-grijs",
+  INGEDIEND: "b-blauw", IN_BEHANDELING: "b-amber", WACHT_OP_AANVULLING: "b-oranje", GOEDGEKEURD: "b-groen",
+  GEWEIGERD: "b-rood", BEVESTIGD: "b-paars", BETAALD: "b-teal", KLAARGEZET: "b-cyaan", UITGELEVERD: "b-indigo",
+  GERETOURNEERD: "b-lime", IN_CONTROLE: "b-geel", SCHADE_VASTGESTELD: "b-rose",
+  AFGESLOTEN: "b-grijs", GEANNULEERD: "b-licht",
 };
 // Statussen waarvan de reservatie de voorraad bezet houdt.
 const BEZET_STATUS = ["GOEDGEKEURD", "BEVESTIGD", "BETAALD", "KLAARGEZET", "UITGELEVERD", "GERETOURNEERD", "IN_CONTROLE"];
@@ -527,7 +568,7 @@ const S = {
   ik: { naam: "", email: "", rollen: [] },
   rollenIngesteld: false,   // staan er ROL:-regels in de instellingen?
   data: { UL_Materialen: [], UL_Dossiers: [], UL_Regels: [], UL_Instellingen: [] },
-  tab: "overzicht", dossierId: null, filter: "te_behandelen", zoek: "",
+  tab: "dashboard", dosTab: null, dossierId: null, filter: "te_behandelen", zoek: "",
   tempTeller: -1, laatsteBreedte: window.innerWidth,
 };
 
@@ -708,35 +749,38 @@ function zetStatus(dossier, naar, logTekst) {
 
 /* ── Navigatie en weergave ────────────────────────────────────────────── */
 const TABS = [
-  ["overzicht", "Aanvragen", () => true],
-  ["nieuw", "Nieuwe aanvraag", () => magBehandelen()],
-  ["beschikbaar", "Beschikbaarheid", () => true],
-  ["catalogus", "Catalogus", () => magIk("ADMIN", "BEHEERDER", "MAGAZIJNIER")],
-  ["beheer", "Beheer", () => magIk("BEHEERDER")],
-  ["opslag", "Opslag en installatie", () => true],
+  ["dashboard", "Dashboard", "▤", () => true],
+  ["overzicht", "Aanvragen behandelen", "▦", () => true],
+  ["nieuw", "Nieuwe aanvraag", "✎", () => magBehandelen()],
+  ["beschikbaar", "Beschikbaarheid", "▧", () => true],
+  ["catalogus", "Materiaalbeheer", "▣", () => magIk("ADMIN", "BEHEERDER", "MAGAZIJNIER")],
+  ["beheer", "Beheer en configuratie", "⚙", () => magIk("BEHEERDER")],
+  ["opslag", "Opslag en installatie", "⬡", () => true],
 ];
 function ga(tab, dossierId) {
-  S.tab = tab; if (dossierId !== undefined) S.dossierId = dossierId;
+  S.tab = tab;
+  if (dossierId !== undefined) { S.dossierId = dossierId; S.dosTab = null; }
   render();
   window.scrollTo(0, 0);
 }
 function tekenTabs() {
   const teBehandelen = S.data.UL_Dossiers.filter((d) => TE_BEHANDELEN.includes(d.UL_Status)).length;
-  document.getElementById("tabs").innerHTML = TABS.filter(([, , zicht]) => zicht()).map(([id, naam]) =>
+  document.getElementById("tabs").innerHTML = TABS.filter((t) => t[3]()).map(([id, naam, ikoon]) =>
     `<button data-tab="${id}" class="${S.tab === id || (id === "overzicht" && S.tab === "dossier") ? "actief" : ""}">
-      ${naam}${id === "overzicht" && teBehandelen ? `<span class="tel">${teBehandelen}</span>` : ""}</button>`).join("");
+      <span class="ikoon">${ikoon}</span>${naam}${id === "overzicht" && teBehandelen ? `<span class="tel">${teBehandelen}</span>` : ""}</button>`).join("");
 }
 function render() {
   tekenTabs();
   const app = document.getElementById("app");
   if (S.info && S.info.fataal) { app.innerHTML = schermInstallatieNodig(); return; }
-  const schermen = { overzicht: schermOverzicht, dossier: schermDossier, nieuw: schermNieuw,
-    beschikbaar: schermBeschikbaar, catalogus: schermCatalogus, beheer: schermBeheer, opslag: schermOpslag };
-  app.innerHTML = (schermen[S.tab] || schermOverzicht)();
+  const schermen = { dashboard: schermDashboard, overzicht: schermOverzicht, dossier: schermDossier,
+    nieuw: schermNieuw, beschikbaar: schermBeschikbaar, catalogus: schermCatalogus,
+    beheer: schermBeheer, opslag: schermOpslag };
+  app.innerHTML = (schermen[S.tab] || schermDashboard)();
   naRender();
 }
 
-/* ── Scherm: overzicht ────────────────────────────────────────────────── */
+/* ── Scherm: dashboard (zoals de webapp) ──────────────────────────────── */
 const FILTERS = {
   te_behandelen: ["Te behandelen", TE_BEHANDELEN],
   nieuw: ["Nieuw ingediend", ["INGEDIEND"]],
@@ -744,9 +788,50 @@ const FILTERS = {
   retour: ["Retour en controle", ["UITGELEVERD", "GERETOURNEERD", "IN_CONTROLE", "SCHADE_VASTGESTELD"]],
   alle: ["Alle", null],
 };
+function schermDashboard() {
+  const tel = (st) => S.data.UL_Dossiers.filter((d) => st.includes(d.UL_Status)).length;
+  const teBehandelen = tel(TE_BEHANDELEN);
+  const lopend = S.data.UL_Dossiers.filter((d) => !["AFGESLOTEN", "GEWEIGERD", "GEANNULEERD"].includes(d.UL_Status))
+    .sort((a, b) => (b.Id || 0) - (a.Id || 0)).slice(0, 8);
+  const gisteren = vandaagPlus(-1);
+  const binnenkort = S.data.UL_Dossiers.filter((d) => ["BEVESTIGD", "BETAALD", "KLAARGEZET"].includes(d.UL_Status)
+    && d.UL_Van && d.UL_Van >= gisteren).sort((a, b) => (a.UL_Van < b.UL_Van ? -1 : 1)).slice(0, 6);
+  return `
+  <div class="rij" style="justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div><h1 class="paginakop">Dashboard</h1>
+      <p class="subtitel" style="margin:0">Operationeel overzicht van de uitleendienst</p></div>
+    <button class="knop" data-filter="te_behandelen">Aanvragen behandelen${teBehandelen ? ` <span class="n" style="background:rgba(255,255,255,.55);border-radius:99px;padding:1px 8px;font-size:.75rem">${teBehandelen}</span>` : ""}</button>
+  </div>
+  <div class="tellers">
+    <div class="teller t-blauw" data-filter="nieuw"><b>${tel(["INGEDIEND"])}</b><span>Nieuw ingediend</span></div>
+    <div class="teller t-amber" data-filter="te_behandelen"><b>${teBehandelen}</b><span>Te behandelen</span></div>
+    <div class="teller t-teal" data-filter="uitvoering"><b>${tel(["BETAALD", "KLAARGEZET", "UITGELEVERD"])}</b><span>In uitvoering</span></div>
+    <div class="teller t-indigo" data-filter="retour"><b>${tel(["GERETOURNEERD", "IN_CONTROLE"])}</b><span>Retour en controle</span></div>
+    <div class="teller t-rose" data-filter="retour"><b>${tel(["SCHADE_VASTGESTELD"])}</b><span>Schade open</span></div>
+    <div class="teller" data-filter="alle"><b>${S.data.UL_Dossiers.length}</b><span>Alle dossiers</span></div>
+  </div>
+  <div class="twee">
+    <div class="kaart"><h2>Lopende dossiers</h2>
+      ${lopend.length ? `<div class="tabelwrap" style="border:0;box-shadow:none"><table><tbody>
+        ${lopend.map((d) => `<tr class="klik" data-dossier="${d.Id}">
+          <td><span class="mono">${esc(d.Title)}</span><div class="stil-tekst">${esc(d.UL_Aanvrager)} · ${esc(d.UL_Evenement)} · ${dDatum(d.UL_Van)}</div></td>
+          <td style="text-align:right">${statusBadge(d.UL_Status)}</td></tr>`).join("")}
+      </tbody></table></div>` : `<p class="stil-tekst">Geen lopende dossiers.</p>`}
+    </div>
+    <div class="kaart"><h2>Binnenkort uit te voeren</h2>
+      ${binnenkort.length ? `<div class="tabelwrap" style="border:0;box-shadow:none"><table><tbody>
+        ${binnenkort.map((d) => `<tr class="klik" data-dossier="${d.Id}">
+          <td><b>${esc(d.UL_Aanvrager)}</b><div class="stil-tekst">${esc(d.Title)} · ${esc(d.UL_Leveringswijze)}</div></td>
+          <td style="text-align:right;white-space:nowrap">${dDatum(d.UL_Van)}</td></tr>`).join("")}
+      </tbody></table></div>` : `<p class="stil-tekst">Geen geplande leveringen of afhalingen.</p>`}
+    </div>
+  </div>`;
+}
+
+/* ── Scherm: aanvragen behandelen ─────────────────────────────────────── */
 function schermOverzicht() {
-  const tel = (statussen) => S.data.UL_Dossiers.filter((d) => !statussen || statussen.includes(d.UL_Status)).length;
-  let dossiers = S.data.UL_Dossiers.filter((d) => {
+  const tel = (st) => S.data.UL_Dossiers.filter((d) => !st || st.includes(d.UL_Status)).length;
+  const dossiers = S.data.UL_Dossiers.filter((d) => {
     const f = FILTERS[S.filter][1];
     if (f && !f.includes(d.UL_Status)) return false;
     if (S.zoek) {
@@ -755,28 +840,24 @@ function schermOverzicht() {
     }
     return true;
   }).sort((a, b) => (b.Id || 0) - (a.Id || 0));
-
   return `
-  <div class="tellers">${Object.entries(FILTERS).map(([id, [naam, st]]) =>
-    `<div class="teller" data-filter="${id}"><b>${tel(st)}</b><span>${naam}</span></div>`).join("")}
+  <h1 class="paginakop">Aanvragen behandelen</h1>
+  <p class="subtitel">Hier volg je de binnengekomen aanvragen op: voorraadcontrole, goedkeuren of weigeren, kosten en betaling, uitvoering en retour.</p>
+  <div class="chips">${Object.entries(FILTERS).map(([id, [naam, st]]) =>
+    `<button class="chip ${S.filter === id ? "actief" : ""}" data-filter="${id}">${naam}<span class="n">${tel(st)}</span></button>`).join("")}
   </div>
-  <div class="kaart">
-    <div class="rij">
-      <div class="veld" style="flex:1"><label>Zoeken</label>
-        <input id="zoekveld" value="${esc(S.zoek)}" placeholder="Referentie, vereniging of evenement"></div>
-      <span class="badge b-geel" style="align-self:center">${esc(FILTERS[S.filter][0])}</span>
-    </div>
-  </div>
+  <div class="kaart"><div class="veld"><label>Zoeken</label>
+    <input id="zoekveld" value="${esc(S.zoek)}" placeholder="Referentie, vereniging of evenement"></div></div>
   <div class="tabelwrap"><table>
     <thead><tr><th>Referentie</th><th>Aanvrager</th><th>Evenement</th><th>Periode</th><th>Status</th><th></th></tr></thead>
     <tbody>${dossiers.length ? dossiers.map((d) => `
       <tr class="klik" data-dossier="${d.Id}">
-        <td style="font-family:ui-monospace,Consolas,monospace;font-weight:600">${esc(d.Title)}</td>
+        <td class="mono">${esc(d.Title)}</td>
         <td>${esc(d.UL_Aanvrager)}</td><td>${esc(d.UL_Evenement)}</td>
         <td style="white-space:nowrap">${dDatum(d.UL_Van)} tot ${dDatum(d.UL_Tot)}</td>
         <td>${statusBadge(d.UL_Status)}</td>
-        <td><button class="knop klein ${TE_BEHANDELEN.includes(d.UL_Status) && magBehandelen() ? "" : "stil"}" data-dossier="${d.Id}">
-          ${TE_BEHANDELEN.includes(d.UL_Status) && magBehandelen() ? "Behandelen" : "Openen"}</button></td>
+        <td style="text-align:right"><button class="knop klein ${TE_BEHANDELEN.includes(d.UL_Status) && magBehandelen() ? "" : "stil"}" data-dossier="${d.Id}">
+          ${TE_BEHANDELEN.includes(d.UL_Status) && magBehandelen() ? "Behandelen →" : "Openen →"}</button></td>
       </tr>`).join("") :
       `<tr><td colspan="6" class="stil-tekst" style="text-align:center;padding:24px">Geen aanvragen in deze selectie.</td></tr>`}
     </tbody>
@@ -883,7 +964,6 @@ function aanvraagIndienen() {
 function schermDossier() {
   const d = S.data.UL_Dossiers.find((x) => x.Id === S.dossierId);
   if (!d) return `<div class="melding fout">Dit dossier is niet gevonden. Ga terug naar het overzicht.</div>`;
-  const check = stockcheck(d);
   const kosten = berekenKosten(d);
   const behandelbaar = ["IN_BEHANDELING", "WACHT_OP_AANVULLING"].includes(d.UL_Status);
   const magUitvoeren = magIk("ADMIN", "BEHEERDER", "TECHNISCH", "MAGAZIJNIER", "PLOEGBAAS");
@@ -910,15 +990,16 @@ function schermDossier() {
     if (d.UL_Status === "GERETOURNEERD") actieKnoppen.push(`<button class="knop" data-actie="status" data-naar="IN_CONTROLE">Start controle</button>`);
     if (d.UL_Status === "SCHADE_VASTGESTELD" && magBehandelen()) actieKnoppen.push(`<button class="knop" data-actie="status" data-naar="AFGESLOTEN">Dossier afsluiten</button>`);
   }
-  if (["KLAARGEZET", "UITGELEVERD", "GERETOURNEERD", "IN_CONTROLE", "SCHADE_VASTGESTELD", "AFGESLOTEN"].includes(d.UL_Status))
-    actieKnoppen.push(`<button class="knop stil" data-actie="print-ontvangst">Ontvangstbewijs afdrukken</button>`);
-  if (["IN_CONTROLE", "SCHADE_VASTGESTELD", "AFGESLOTEN"].includes(d.UL_Status))
-    actieKnoppen.push(`<button class="knop stil" data-actie="print-retour">Retourformulier afdrukken</button>`);
   if (magBehandelen() && kan("GEANNULEERD"))
     actieKnoppen.push(`<button class="knop stil" data-actie="annuleren">Annuleren</button>`);
 
+  const tabs = [["behandeling", "Materialen & behandeling"], ["retour", "Retour & documenten"], ["historiek", "Historiek"]];
+  const standaard = ["IN_CONTROLE", "SCHADE_VASTGESTELD", "AFGESLOTEN"].includes(d.UL_Status) ? "retour"
+    : ["GEWEIGERD", "GEANNULEERD"].includes(d.UL_Status) ? "historiek" : "behandeling";
+  const dosTab = S.dosTab || standaard;
+
   return `
-  <p><a href="#" data-actie="terug">&larr; Terug naar het overzicht</a></p>
+  <p style="margin:0 0 10px"><a href="#" data-actie="terug">&larr; Terug naar het overzicht</a></p>
   <div class="kaart">
     <div class="dossierkop">
       <div><h2>${esc(d.Title)}</h2><div class="stil-tekst">${esc(d.UL_Aanvrager)} &middot; ${esc(d.UL_Evenement)}</div></div>
@@ -944,11 +1025,18 @@ function schermDossier() {
       </dl>
     </div>
     ${d.UL_Opmerkingen ? `<p class="stil-tekst" style="margin-bottom:0"><b>Opmerkingen:</b> ${esc(d.UL_Opmerkingen)}</p>` : ""}
-    <div class="acties">${actieKnoppen.join("")}</div>
+    ${actieKnoppen.length ? `<div class="acties">${actieKnoppen.join("")}</div>` : ""}
   </div>
+  <div class="dostabs">${tabs.map(([id, naam]) =>
+    `<button data-dostab="${id}" class="${dosTab === id ? "actief" : ""}">${naam}</button>`).join("")}</div>
+  ${dosTab === "behandeling" ? blokBehandeling(d, behandelbaar) : dosTab === "retour" ? blokRetour(d, magRetour) : blokHistoriek(d)}`;
+}
 
-  <div class="kaart"><h2>Materiaal en voorraadcontrole</h2>
-    <div class="tabelwrap"><table>
+function blokBehandeling(d, behandelbaar) {
+  const check = stockcheck(d);
+  return `<div class="kaart"><h2>Materialen en voorraadcontrole</h2>
+    <p class="stil-tekst">Beschikbaarheid berekend voor ${dDatum(d.UL_Van)} tot ${dDatum(d.UL_Tot)}, rekening houdend met andere dossiers.</p>
+    <div class="tabelwrap" style="margin-top:8px"><table>
       <thead><tr><th>Materiaal</th><th class="num">Gevraagd</th><th class="num">Beschikbaar</th>
         <th class="num">${behandelbaar && magBehandelen() ? "Toe te kennen" : "Toegekend"}</th><th>Controle</th></tr></thead>
       <tbody>${check.map((c) => `
@@ -959,16 +1047,40 @@ function schermDossier() {
             ? `<input type="number" min="0" data-toeken="${c.regel.Id}" value="${c.regel.UL_Toegekend || c.regel.UL_Gevraagd}" style="text-align:right;max-width:90px">`
             : (c.regel.UL_Toegekend || "&mdash;")}</td>
           <td>${c.voldoende ? `<span class="badge b-groen">voldoende</span>`
-            : c.bovenLimiet ? `<span class="badge b-warn">boven limiet van ${c.limiet}</span>`
+            : c.bovenLimiet ? `<span class="badge b-amber">boven limiet van ${c.limiet}</span>`
             : `<span class="badge b-rood">tekort</span>`}</td></tr>`).join("")}
       </tbody>
     </table></div>
-  </div>
+  </div>`;
+}
 
-  ${d.UL_Status === "IN_CONTROLE" && magRetour ? schermRetourControle(d) : ""}
+function blokRetour(d, magRetour) {
+  const printKnoppen = [];
+  if (["KLAARGEZET", "UITGELEVERD", "GERETOURNEERD", "IN_CONTROLE", "SCHADE_VASTGESTELD", "AFGESLOTEN"].includes(d.UL_Status))
+    printKnoppen.push(`<button class="knop stil" data-actie="print-ontvangst">Ontvangstbewijs afdrukken</button>`);
+  if (["IN_CONTROLE", "SCHADE_VASTGESTELD", "AFGESLOTEN"].includes(d.UL_Status))
+    printKnoppen.push(`<button class="knop stil" data-actie="print-retour">Retourformulier afdrukken</button>`);
 
-  <div class="kaart"><h2>Historiek</h2>
-    <pre style="white-space:pre-wrap;font:inherit;font-size:.85rem;color:var(--muted);margin:0">${esc(d.UL_Log || "Nog geen historiek.")}</pre>
+  let inhoud;
+  if (d.UL_Status === "IN_CONTROLE" && magRetour) {
+    inhoud = schermRetourControle(d);
+  } else {
+    const regels = regelsVan(d.Id).filter((r) => r.UL_Retour);
+    inhoud = regels.length ? `<div class="kaart"><h2>Retourcontrole</h2>
+      <div class="tabelwrap"><table>
+        <thead><tr><th>Materiaal</th><th class="num">Aantal</th><th>Beoordeling</th><th>Opmerking</th><th class="num">Kost</th></tr></thead>
+        <tbody>${regels.map((r) => `<tr><td>${esc(r.Title)}</td><td class="num">${r.UL_Toegekend || r.UL_Gevraagd}</td>
+          <td>${r.UL_Retour === "SCHADE" ? `<span class="badge b-rose">schade</span>` : `<span class="badge b-groen">goed</span>`}</td>
+          <td>${esc(r.UL_RetourOpm || "")}</td><td class="num">${r.UL_SchadeKost ? euro(r.UL_SchadeKost) : "&mdash;"}</td></tr>`).join("")}
+        </tbody></table></div></div>`
+      : `<div class="kaart"><p class="stil-tekst" style="margin:0">Nog geen retour. De controle start zodra het materiaal terug is (zie de knoppen bovenaan het dossier).</p></div>`;
+  }
+  return `${inhoud}${printKnoppen.length ? `<div class="acties" style="margin-top:0">${printKnoppen.join("")}</div>` : ""}`;
+}
+
+function blokHistoriek(d) {
+  return `<div class="kaart"><h2>Historiek</h2>
+    <pre style="white-space:pre-wrap;font:inherit;font-size:.84rem;color:var(--muted);margin:0">${esc(d.UL_Log || "Nog geen historiek.")}</pre>
   </div>`;
 }
 
@@ -1329,10 +1441,11 @@ function naRender() {
 }
 
 document.addEventListener("click", async (ev) => {
-  const el = ev.target.closest("[data-actie],[data-tab],[data-filter],tr[data-dossier]");
+  const el = ev.target.closest("[data-actie],[data-tab],[data-filter],[data-dostab],tr[data-dossier]");
   if (!el) return;
   if (el.dataset.tab) return ga(el.dataset.tab);
-  if (el.dataset.filter) { S.filter = el.dataset.filter; return render(); }
+  if (el.dataset.dostab) { S.dosTab = el.dataset.dostab; return render(); }
+  if (el.dataset.filter) { S.filter = el.dataset.filter; S.tab = "overzicht"; return render(); }
   if (el.dataset.dossier && !el.dataset.actie) { ev.preventDefault(); return ga("dossier", Q.echtId(+el.dataset.dossier)); }
 
   const d = S.data.UL_Dossiers.find((x) => x.Id === S.dossierId);
